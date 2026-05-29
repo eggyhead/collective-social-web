@@ -287,6 +287,10 @@ export function GroupItemDetailPage({ apiUrl }: GroupItemDetailPageProps) {
   const [mediaItem, setMediaItem] = useState<MediaItem | null>(null);
   const [segments, setSegments] = useState<Segment[]>([]);
   const [progressMap, setProgressMap] = useState<Record<string, SegmentProgress[]>>({});
+  // Total members who have completed each segment, keyed by segment URI.
+  // progressMap only holds the current user's record, so it can't power the
+  // "N members completed" summary — that count comes from the API.
+  const [completionCounts, setCompletionCounts] = useState<Record<string, number>>({});
   const [myProgressSet, setMyProgressSet] = useState<Set<string>>(new Set());
   const [permissions, setPermissions] = useState<Record<string, CollectionPermission>>({});
   const [userDid, setUserDid] = useState<string | null>(null);
@@ -470,6 +474,7 @@ export function GroupItemDetailPage({ apiUrl }: GroupItemDetailPageProps) {
           }
         }
         setProgressMap(normalized);
+        setCompletionCounts(progressData.completionCountBySegment || {});
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -1318,8 +1323,7 @@ export function GroupItemDetailPage({ apiUrl }: GroupItemDetailPageProps) {
           {segments.length > 0 ? (
             <VStack gap={4} align="stretch">
               {segments.map(seg => {
-                const progs = progressMap[seg.uri] || [];
-                const completedCount = progs.filter(p => p.completed).length;
+                const completedCount = completionCounts[seg.uri] ?? 0;
                 const iCompleted = myProgressSet.has(seg.uri);
                 const isDue = seg.assignedDate && new Date(seg.assignedDate) < new Date();
                 const canSee = canSeeDiscussion(seg);

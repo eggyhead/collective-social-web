@@ -108,7 +108,7 @@ function buildFetchMock(
       return makeFetchResponse({ segments: [mockSegment] });
     }
     if (urlStr.includes(`/items/${ITEM_RKEY}/progress`) && method === 'GET') {
-      return makeFetchResponse({ progressBySegment: mockProgressMap });
+      return makeFetchResponse({ progressBySegment: mockProgressMap, completionCountBySegment: { [SEGMENT_URI]: 1 } });
     }
     if (urlStr.includes('/segments/') && urlStr.includes('/posts') && method === 'GET') {
       if (postsResponse) {
@@ -214,7 +214,7 @@ describe('GroupItemDetailPage', () => {
         return makeFetchResponse({ segments: [mockSegment] });
       }
       if (urlStr.includes(`/items/${ITEM_RKEY}/progress`) && method === 'GET') {
-        return makeFetchResponse({ progressBySegment: mockProgressMap });
+        return makeFetchResponse({ progressBySegment: mockProgressMap, completionCountBySegment: { [SEGMENT_URI]: 1 } });
       }
       if (urlStr.includes('/segments/') && urlStr.includes('/posts') && method === 'GET') {
         return makeFetchResponse({ posts: [] });
