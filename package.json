@@ -12,7 +12,10 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css}\"",
     "test": "vitest run",
     "test:watch": "vitest",
-    "prepare": "husky"
+    "prepare": "husky",
+    "check:bundle": "node scripts/check-bundle-size.js",
+    "check:lighthouse": "npx @lhci/cli autorun",
+    "check:perf": "npm run build && npm run check:bundle"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.30.0",
