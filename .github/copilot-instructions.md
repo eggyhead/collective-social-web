@@ -1,9 +1,11 @@
 # Copilot Instructions - Collective Social Web
 
 ## Project Overview
+
 React 19 + TypeScript frontend for Collective Social, a book/media tracking and review platform with ATProto/Bluesky integration.
 
 ## Technology Stack
+
 - **Framework**: React 19.0.0 with TypeScript
 - **Build Tool**: Vite 6.0.1
 - **UI Library**: Chakra UI v3.30.0 (latest major version)
@@ -12,6 +14,7 @@ React 19 + TypeScript frontend for Collective Social, a book/media tracking and 
 - **Styling**: Emotion (CSS-in-JS via Chakra UI)
 
 ## Project Structure
+
 ```
 src/
 ├── App.tsx                    # Main app component with routing
@@ -44,6 +47,7 @@ src/
 ## Chakra UI v3 - Important Changes from v2
 
 ### Breaking Changes to Know
+
 1. **Theme System**: Use `createSystem()` instead of `extendTheme()`
 2. **Provider**: `<Provider>` replaces `<ChakraProvider>`
 3. **Props**: `colorPalette` replaces `colorScheme`
@@ -62,6 +66,7 @@ src/
    - `isReadOnly` → `readOnly`
 
 ### Common Chakra Patterns in This Project
+
 ```tsx
 // Box with styling
 <Box bg="bg.subtle" borderRadius="lg" p={4}>
@@ -93,6 +98,7 @@ src/
 ```
 
 ### Chakra UI Semantic Tokens
+
 - Colors: `bg.subtle`, `bg.muted`, `fg.muted`, `border`, `teal.500`, etc.
 - Use semantic tokens for better theme support
 - Primary color palette: `teal` (500, 600, 700, etc.)
@@ -100,52 +106,64 @@ src/
 ## Component Patterns
 
 ### Star Rating System
+
 Two components work together:
 
 #### StarRating (Display Only)
+
 ```tsx
 <StarRating rating={4.5} size="1.5rem" color="teal.500" />
 ```
+
 - Shows filled/half/empty stars
 - Uses LuStar and LuStarHalf from react-icons/lu
 - Props: `rating: number`, `size?: string`, `color?: string`
 
 #### StarRatingSelector (Interactive)
+
 ```tsx
-<StarRatingSelector
-  rating={rating}
-  onChange={(newRating) => setRating(newRating)}
-  size="24px"
-/>
+<StarRatingSelector rating={rating} onChange={newRating => setRating(newRating)} size="24px" />
 ```
+
 - Mouse: Click left half for 0.5, right half for full star
 - Keyboard: Arrow keys to adjust (0.5-5 in 0.5 increments)
 - Accessible: `role="radiogroup"`, keyboard navigation
 - Single tab stop (container), individual stars are `tabIndex={-1}`
 
 ### Rating Distribution Display
+
 ```tsx
 <RatingDistributionDisplay
   distribution={{
-    rating5: 20, rating4_5: 13, rating4: 7,
-    rating3_5: 5, rating3: 3, rating2_5: 1,
-    rating2: 0, rating1_5: 0, rating1: 0,
-    rating0_5: 0, rating0: 0
+    rating5: 20,
+    rating4_5: 13,
+    rating4: 7,
+    rating3_5: 5,
+    rating3: 3,
+    rating2_5: 1,
+    rating2: 0,
+    rating1_5: 0,
+    rating1: 0,
+    rating0_5: 0,
+    rating0: 0,
   }}
   totalRatings={49}
 />
 ```
+
 - Clickable to expand/collapse
 - Shows horizontal bar chart with percentages
 - Keyboard accessible (Enter/Space to toggle)
 
 ### Text Utils - Link Parsing
+
 ```tsx
 import { renderTextWithLinks } from '../utils/textUtils';
 
 // In component
-<Text>{renderTextWithLinks(bioText)}</Text>
+<Text>{renderTextWithLinks(bioText)}</Text>;
 ```
+
 - Converts `@handle.bsky.social` → Bluesky profile link
 - Converts `#hashtag` → Bluesky search link
 - Converts URLs → clickable external links
@@ -154,19 +172,22 @@ import { renderTextWithLinks } from '../utils/textUtils';
 ## API Integration
 
 ### Base URL
+
 Configured in `App.tsx`, passed down as prop:
+
 ```tsx
 const apiUrl = 'http://localhost:3000';
 ```
 
 ### Common API Patterns
+
 ```typescript
 // Authenticated requests (include credentials)
 const response = await fetch(`${apiUrl}/endpoint`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   credentials: 'include', // Important for session cookies
-  body: JSON.stringify(data)
+  body: JSON.stringify(data),
 });
 
 // Error handling
@@ -177,6 +198,7 @@ const data = await response.json();
 ```
 
 ### Key Endpoints Used
+
 - `GET /users/me` - Current user info
 - `GET /collections/public/:did` - User's public collections
 - `POST /collections/items` - Add/update item in collection
@@ -189,6 +211,7 @@ const data = await response.json();
 ## TypeScript Interfaces
 
 ### Media Item
+
 ```typescript
 interface RatingDistribution {
   rating0: number;
@@ -222,6 +245,7 @@ interface MediaItem {
 ```
 
 ### List Item (Collection Item)
+
 ```typescript
 interface ListItem {
   uri: string;
@@ -241,6 +265,7 @@ interface ListItem {
 ```
 
 ### User Profile
+
 ```typescript
 interface UserProfile {
   did: string;
@@ -251,14 +276,15 @@ interface UserProfile {
   followerCount: number;
   followsCount: number;
   postsCount: number;
-  collectionCount: number;  // Added in recent updates
-  reviewCount: number;      // Added in recent updates
+  collectionCount: number; // Added in recent updates
+  reviewCount: number; // Added in recent updates
 }
 ```
 
 ## Routing
 
 ### Route Structure
+
 ```tsx
 <Routes>
   <Route path="/" element={<HomePage />} />
@@ -273,25 +299,27 @@ interface UserProfile {
 ```
 
 ### Navigation
+
 ```tsx
 import { useNavigate } from 'react-router-dom';
 
 const navigate = useNavigate();
-navigate('/path');           // Navigate to path
-navigate(-1);               // Go back
-navigate(`/items/${id}`);   // Dynamic route
+navigate('/path'); // Navigate to path
+navigate(-1); // Go back
+navigate(`/items/${id}`); // Dynamic route
 ```
 
 ## Accessibility Patterns
 
 ### Keyboard Navigation
+
 ```tsx
 // Clickable cards
 <Box
   role="button"
   tabIndex={0}
   onClick={handleClick}
-  onKeyDown={(e) => {
+  onKeyDown={e => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       handleClick();
@@ -304,6 +332,7 @@ navigate(`/items/${id}`);   // Dynamic route
 ```
 
 ### Focus Management
+
 - Use `_focusVisible` for keyboard-only focus indicators
 - Ensure all interactive elements are keyboard accessible
 - Use semantic HTML (`<button>`, `<a>`) when possible
@@ -311,6 +340,7 @@ navigate(`/items/${id}`);   // Dynamic route
 ## State Management
 
 ### Local State with useState
+
 ```tsx
 const [items, setItems] = useState<ListItem[]>([]);
 const [loading, setLoading] = useState(true);
@@ -318,6 +348,7 @@ const [error, setError] = useState<string | null>(null);
 ```
 
 ### Effect Hooks
+
 ```tsx
 useEffect(() => {
   const fetchData = async () => {
@@ -338,6 +369,7 @@ useEffect(() => {
 ## Common Patterns
 
 ### Loading States
+
 ```tsx
 if (loading) {
   return (
@@ -352,6 +384,7 @@ if (loading) {
 ```
 
 ### Error States
+
 ```tsx
 if (error) {
   return (
@@ -363,6 +396,7 @@ if (error) {
 ```
 
 ### Admin Error Handling
+
 ```tsx
 const response = await fetch(`${apiUrl}/admin/endpoint`, {
   credentials: 'include',
@@ -380,6 +414,7 @@ if (!response.ok) {
 ```
 
 ### Empty States
+
 ```tsx
 import { EmptyState } from '../components/EmptyState';
 
@@ -387,24 +422,26 @@ import { EmptyState } from '../components/EmptyState';
   title="No items found"
   description="Add your first item to get started"
   icon={<LuBookOpen size={48} />}
-/>
+/>;
 ```
 
 ### Modal Dialogs (Chakra v3)
+
 ```tsx
 import { DialogRoot, DialogContent, DialogHeader, DialogBody } from '@chakra-ui/react';
 
-<DialogRoot open={isOpen} onOpenChange={(e) => setIsOpen(e.open)}>
+<DialogRoot open={isOpen} onOpenChange={e => setIsOpen(e.open)}>
   <DialogContent>
     <DialogHeader>Title</DialogHeader>
     <DialogBody>Content</DialogBody>
   </DialogContent>
-</DialogRoot>
+</DialogRoot>;
 ```
 
 ## Development Workflow
 
 ### Running the App
+
 ```bash
 npm run dev          # Start Vite dev server (http://localhost:5173)
 npm run build        # Build for production
@@ -413,6 +450,7 @@ npm run lint         # Run ESLint
 ```
 
 ### Environment Setup
+
 - No `.env` file needed for development (API URL hardcoded)
 - Backend must be running on `http://localhost:3000`
 - Hot reload enabled via Vite
@@ -420,7 +458,9 @@ npm run lint         # Run ESLint
 ## Styling Guidelines
 
 ### Responsive Design
+
 Use Chakra's responsive props with breakpoints:
+
 - `base`: 0px and up (mobile)
 - `sm`: 480px and up
 - `md`: 768px and up
@@ -436,13 +476,16 @@ Use Chakra's responsive props with breakpoints:
 ```
 
 ### Color Scheme
+
 - Primary: Teal (`teal.500`, `teal.600`, etc.)
 - Backgrounds: `bg.subtle`, `bg.muted`
 - Text: Default, `fg.muted` for secondary
 - Borders: `border` semantic token
 
 ### Spacing
+
 Use Chakra's gap/padding scale:
+
 - Small: `2`, `3`, `4`
 - Medium: `6`, `8`
 - Large: `10`, `12`
@@ -464,18 +507,21 @@ Use Chakra's gap/padding scale:
 ## Testing
 
 Currently no automated tests. Manual testing via:
+
 - Browser dev tools
 - React DevTools
 
 ## Installed Skills (gstack)
 
 This project has gstack skills installed in `.github/copilot-skills/` for structured AI-assisted development workflows:
+
 - **review.md** — Pre-landing PR review (SQL safety, trust boundaries, structural issues)
 - **qa.md** — QA testing workflows
 - **ship.md** — Shipping/PR creation workflows
 - **investigate.md** — Debugging and investigation workflows
 
 Reference these skills when performing code review, QA, shipping, or debugging tasks.
+
 - Network tab for API calls
 
 ## Performance Considerations
@@ -495,3 +541,17 @@ Reference these skills when performing code review, QA, shipping, or debugging t
 - Add error boundaries
 - Implement toast notifications for actions
 - Add animation/transitions for better UX
+
+---
+
+## AI Priming Rules (Hard Constraints)
+
+These rules MUST be followed in all generated code:
+
+1. **Chakra UI v3 only**: `DialogRoot`/`open`/`colorPalette`, never `Modal`/`isOpen`/`colorScheme`
+2. **AbortController in all useEffect fetches**: Return `controller.abort()` in cleanup
+3. **Always `credentials: 'include'`** on fetch calls to the API
+4. **Route-level code splitting**: New pages must use `React.lazy()` in App.tsx
+5. **No class components, no Redux/Zustand/Context for server state**
+6. **Tests required**: New components need tests in `src/test/` using Vitest + Testing Library
+7. **Named exports + lazy pattern**: `React.lazy(() => import('./pages/X').then(m => ({ default: m.XPage })))`
