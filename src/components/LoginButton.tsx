@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Button, Heading, Input, Text, VStack } from '@chakra-ui/react';
 import { Field } from './ui/field';
 import { peekPostLoginRedirectReason } from '../utils/authRedirect';
@@ -11,6 +11,20 @@ export function LoginButton({ apiUrl }: LoginButtonProps) {
   const [handle, setHandle] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Reset form state when navigating back (browser back button restores
+  // the page from bfcache with stale state like isLoading=true).
+  useEffect(() => {
+    const resetForm = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        setHandle('');
+        setIsLoading(false);
+        setError('');
+      }
+    };
+    window.addEventListener('pageshow', resetForm);
+    return () => window.removeEventListener('pageshow', resetForm);
+  }, []);
   // If the visitor was bounced here from a protected page, surface the
   // reason so they understand why they're being asked to sign in.
   const redirectReason = peekPostLoginRedirectReason();
@@ -29,7 +43,7 @@ export function LoginButton({ apiUrl }: LoginButtonProps) {
       const input = document.createElement('input');
       input.type = 'hidden';
       input.name = 'input';
-      input.value = handle;
+      input.value = handle.trim().toLowerCase();
 
       form.appendChild(input);
       document.body.appendChild(form);
