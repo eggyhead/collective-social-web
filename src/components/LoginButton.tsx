@@ -12,18 +12,18 @@ export function LoginButton({ apiUrl }: LoginButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Reset form state when navigating back (browser back button restores
-  // the page from bfcache with stale state like isLoading=true).
+  // Reset transient state when navigating back (browser back button restores
+  // the page from bfcache with stale isLoading/error state). Handle is
+  // preserved so the user doesn't have to retype it.
   useEffect(() => {
-    const resetForm = (event: PageTransitionEvent) => {
+    const resetTransientState = (event: PageTransitionEvent) => {
       if (event.persisted) {
-        setHandle('');
         setIsLoading(false);
         setError('');
       }
     };
-    window.addEventListener('pageshow', resetForm);
-    return () => window.removeEventListener('pageshow', resetForm);
+    window.addEventListener('pageshow', resetTransientState);
+    return () => window.removeEventListener('pageshow', resetTransientState);
   }, []);
   // If the visitor was bounced here from a protected page, surface the
   // reason so they understand why they're being asked to sign in.

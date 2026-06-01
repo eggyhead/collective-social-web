@@ -32,21 +32,37 @@ describe('LoginButton', () => {
     vi.restoreAllMocks();
   });
 
-  it('resets form state on pageshow event (back button)', async () => {
+  it('resets loading/error but preserves handle on pageshow (back button)', async () => {
     const user = userEvent.setup();
     renderLoginButton();
 
     const input = await screen.findByPlaceholderText('Enter your handle or DID');
     await user.type(input, 'MyHandle.bsky.social');
 
-    expect(input).toHaveValue('MyHandle.bsky.social');
+    // Spy after render to avoid interfering with Chakra setup
+    vi.spyOn(document.body, 'appendChild').mockImplementation(node => {
+      if (node instanceof HTMLFormElement) {
+        node.submit = vi.fn();
+      }
+      return node;
+    });
+
+    // Submit to enter loading state
+    const submitButton = screen.getByRole('button', { name: /login with atproto/i });
+    await user.click(submitButton);
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /redirecting/i })).toBeInTheDocument();
+    });
 
     // Simulate browser back navigation (pageshow with persisted=true)
     const pageshowEvent = new PageTransitionEvent('pageshow', { persisted: true });
     fireEvent(window, pageshowEvent);
 
+    // Handle is preserved, but loading state is cleared
     await waitFor(() => {
-      expect(input).toHaveValue('');
+      expect(input).toHaveValue('MyHandle.bsky.social');
+      expect(screen.getByRole('button', { name: /login with atproto/i })).not.toBeDisabled();
     });
   });
 
