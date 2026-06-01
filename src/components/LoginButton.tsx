@@ -88,7 +88,7 @@ export function LoginButton({ apiUrl }: LoginButtonProps) {
           <Button
             type="submit"
             colorPalette="accent"
-            disabled={isLoading || !handle}
+            disabled={isLoading || !handle.trim()}
             size="lg"
             cursor={isLoading ? 'wait' : 'pointer'}
           >

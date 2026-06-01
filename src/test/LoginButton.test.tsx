@@ -93,6 +93,17 @@ describe('LoginButton', () => {
     appendChildSpy.mockRestore();
   });
 
+  it('disables submit when handle is whitespace-only', async () => {
+    const user = userEvent.setup();
+    renderLoginButton();
+
+    const input = await screen.findByPlaceholderText('Enter your handle or DID');
+    await user.type(input, '   ');
+
+    const submitButton = screen.getByRole('button', { name: /login with atproto/i });
+    expect(submitButton).toBeDisabled();
+  });
+
   it('shows loading state during submission', async () => {
     const user = userEvent.setup();
     renderLoginButton();
